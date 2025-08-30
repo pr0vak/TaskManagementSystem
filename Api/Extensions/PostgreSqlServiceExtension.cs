@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TaskManagement.API.Data;
+using TaskManagement.API.Models;
 
 namespace TaskManagement.API.Extensions;
 
@@ -21,7 +22,7 @@ public static class PostgreSqlServiceExtension
     public static void AddPostgreSqlIdentityContext(
         this IServiceCollection services)
     {
-        services.AddIdentity<IdentityUser, IdentityRole>()
+        services.AddIdentity<AppUser, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>();
     }
 }
