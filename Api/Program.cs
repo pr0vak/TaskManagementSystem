@@ -1,7 +1,12 @@
+using TaskManagement.API.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddPostgreSqlDbContext(builder.Configuration);
+builder.Services.AddPostgreSqlIdentityContext();
 
 var app = builder.Build();
 
