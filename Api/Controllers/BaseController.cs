@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TaskManagement.API.Data;
 
 namespace TaskManagement.API.Controllers
 {
@@ -6,5 +7,11 @@ namespace TaskManagement.API.Controllers
     [ApiController]
     public class BaseController : ControllerBase
     {
+        protected readonly AppDbContext dbContext;
+
+        public BaseController(AppDbContext dbContext)
+        {
+            this.dbContext = dbContext; 
+        }
     }
 }
