@@ -18,7 +18,7 @@ namespace TaskManagement.API.Controllers
             return Ok(await dbContext.ProjectTasks.ToListAsync());
         }
 
-        [HttpGet]
+        [HttpGet("{id}", Name = nameof(GetTaskById))]
         public async Task<IActionResult> GetTaskById(int id)
         {
             if (id <= 0)
@@ -26,7 +26,7 @@ namespace TaskManagement.API.Controllers
                 {
                     IsSuccess = false,
                     StatusCode = HttpStatusCode.BadRequest,
-                    ErrorMessages = { "Некорректный Id" }                    
+                    ErrorMessages = { "Некорректный Id" }
                 });
 
             var task = await dbContext.ProjectTasks
@@ -45,6 +45,63 @@ namespace TaskManagement.API.Controllers
                 StatusCode = HttpStatusCode.OK,
                 Result = task
             });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ServerResponse>> CreateTask(
+            [FromBody] TaskCreateDto taskCreateDto)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (!Enum.IsDefined(taskCreateDto.Status))
+                    {
+                        return BadRequest(new ServerResponse()
+                        {
+                            IsSuccess = false,
+                            StatusCode = HttpStatusCode.BadRequest,
+                            ErrorMessages = { "Некорректный статус задачи" }
+                        });
+                    }
+
+                    ProjectTask task = new()
+                    {
+                        Title = taskCreateDto.Title,
+                        Description = taskCreateDto.Description,
+                        Status = taskCreateDto.Status
+                    };
+
+                    await dbContext.ProjectTasks.AddAsync(task);
+                    await dbContext.SaveChangesAsync();
+
+                    var response = new ServerResponse()
+                    {
+                        StatusCode = HttpStatusCode.Created,
+                        Result = task
+                    };
+
+                    return CreatedAtRoute(nameof(GetTaskById), new { id = task.Id }, response);
+                }
+                else
+                {
+                    return BadRequest(new ServerResponse()
+                    {
+                        IsSuccess = false,
+                        StatusCode = HttpStatusCode.BadRequest,
+                        ErrorMessages = { "Модель данных не валидна" }
+                    });
+                }             
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ServerResponse()
+                    {
+                        IsSuccess = false,
+                        StatusCode = HttpStatusCode.BadRequest,
+                        ErrorMessages = { "Что-то пошло не так", ex.Message }
+                    });
+            }
         }
     }
 }
