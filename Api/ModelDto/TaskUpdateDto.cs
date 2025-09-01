@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TaskManagement.API.Models;
+namespace TaskManagement.API.ModelDto;
 
-public class TaskCreateDto
+public class TaskUpdateDto
 {
+    [Key]
+    public int Id { get; set; }
     [Required]
     public string Title { get; set; }
     public string Description { get; set; }
     [Required]
-    public TaskStatus Status { get; set; }
+    public Models.TaskStatus Status { get; set; }
 }
