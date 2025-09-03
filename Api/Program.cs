@@ -18,6 +18,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection();
+await app.Services.InitializeRolesAsync();
 
 app.Run();
